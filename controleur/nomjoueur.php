@@ -1,4 +1,6 @@
 <?php
+//script d'aide
+//recupere les valuers des cookies
 		if (isset($_COOKIE["nomj1"])) {
 		$j1 = $_COOKIE["nomj1"];
 		} else { $j1 = ""; }
