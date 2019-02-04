@@ -1,14 +1,11 @@
 <?php
-define("MAX_DEPTH", 5);//Depending on machine's speed, 5 or 6 is a reasonable bound
+define("MAX_DEPTH", 5);
 
-/* Uses min-max algorithm and alpha-beta pruning to determing best move.
- * Scoring is determined by the number and length of contiguous paths which are possible future win paths.
- */
 class C4AI{
 	private $a, $b;
-    private $bestMove = NULL;//integer 0-6
+    private $bestMove = NULL;//entier entre 0 et 6
     private $allMoves = array();
-	private $ref = array();//Map between column and current index of top SPACE (so if column i is empty, ref[i] = 6
+	private $ref = array();//relie entre les colonne et l'indexe superieur vides
 	private $score = 0;
 	private static $instance = NULL;
 	private function __construct(){}
@@ -26,10 +23,10 @@ class C4AI{
 		$beta = INF;
 		for($i = 0; $i < 7; $i++){
 			if($board[0][$i] != 0){
-				//entire column filled
+				//toute la colnne est vide
 				continue;
 			}
-			//apply move, calculate the max for the next state
+			//on joue et calcule le max
 			$this->doMove($board, $i, $this->b);
 			if($this->hasWon($board, $this->ref[$i]+1, $i, $this->b)){
 				$val = -10000 + $depth;
@@ -50,12 +47,12 @@ class C4AI{
 				break;
 			}
 			if($beta < $alpha){
-				//then this parent will have a smaller value then the current best alpha, no chance
+				//si ce partent a une valeur inferieur à best alpha => no chance
 				return $beta;
 			}
 		}
 		if($min == NULL){
-			//there were no moves
+			//aucun best move
 			return $this->score($board);
 		}
 		else{
@@ -63,23 +60,19 @@ class C4AI{
 		}
 	}
 
-	/* Goes through all player a's options, returns the maximum value (of the mins of those options)
-	 * Board must be passed by reference since PHP copies arrays by default
-	 */
 	private function max(&$board, $depth, $alpha, $beta){
 		$max = NULL;
 		$won = false;
-		$alpha = -1 * INF; //we want to set the alpha on this level, not based on previous alpha
+		$alpha = -1 * INF; 
 		for($i = 0; $i < 7; $i++){
 			//printf("Max d%d, a%d, b%d\n", $depth, $alpha, $beta);
 			if($board[0][$i] != 0){
-				//entire column filled
 				continue;
 			}
-			//apply move, calculate the min for this state
+			//joue et calcule le min
 			$this->doMove($board, $i, $this->a);
 			if($this->hasWon($board, $this->ref[$i]+1, $i, $this->a)){
-				$val = 10000 - $depth; //the longer we have to wait for the win, the less of a good move it is
+				$val = 10000 - $depth; //la logueeur pour reussir
 				$won = true;
 			}
 			else if($depth+1 >= MAX_DEPTH){
@@ -97,17 +90,17 @@ class C4AI{
 				$max = $val;
 				$alpha = $val;
 				if($depth == 0){
-					$this->bestMove = $i;//only interested in the actual best move for depth 0
+					$this->bestMove = $i;
 				}
 			}
 			if($won){ break; }
 			if($alpha > $beta && $depth != 0){
-				//the current max val is > then parent level beta, so no way will parent be chosen
+				//max val  > beta = > aucune chance
 				return $alpha;
 			}
 		}
 		if($max == NULL){
-			//there were no moves
+			//auncun move
 			return $this->score($board);
 		}
 		else{
@@ -115,7 +108,7 @@ class C4AI{
 		}
 	}
 
-	//helpers
+	//jouer
 	public function doMove(&$board, $i, $player){
 		if($this->ref[$i] < 0){
 			throw new Exception("Cannot make move");
@@ -124,6 +117,7 @@ class C4AI{
 		$this->ref[$i] = $this->ref[$i] - 1;
     }
 
+    //retour
 	public function undoMove(&$board, $i, $player){
 		if($this->ref[$i] > 6 || $board[$this->ref[$i]+1][$i] != $player){
 			throw new Exception("Cannot undo move, unexpected player");
@@ -132,11 +126,9 @@ class C4AI{
 		$this->ref[$i] = $this->ref[$i] + 1;
     }
 
-	/* Checks whether the most recent simulated move results in the player winning
-	 * jStart is the column of the move just made, so ref[jStart] points just above
-	 */
+    //semblable à est_gagnat
 	public function hasWon(&$board, $iStart, $jStart, $player){
-		//check horizontal
+		//horizontal
 		$hCount = 1;
 		$i = $iStart;
 		$j = $jStart-1;
@@ -155,7 +147,7 @@ class C4AI{
 			else{break;}
 			$j++;
 		}
-		//check vertical
+		//vertical
 		$vCount = 1;
 		$i = $iStart-1;
 		$j = $jStart;
@@ -174,7 +166,7 @@ class C4AI{
 			else{break;}
 			$i++;
 		}
-		//check diagonal bl-tr
+		//diagonal
 		$d1Count = 1;
 		$i = $iStart-1;
 		$j = $jStart+1;
@@ -196,7 +188,7 @@ class C4AI{
 			$i++;
 			$j--;
 		}
-		//check diagonal br-tl
+		// diagonal 
 		$d2Count = 1;
 		$i = $iStart-1;
 		$j = $jStart-1;
@@ -229,16 +221,15 @@ class C4AI{
 	private function scoreDiff(&$board, $i, $j, $player){
 
 	}
+	//Qui le joueur
 	private function playerWeight($player){
 		return $player == $this->a ? 1 : -1;
     }
     
-	/* given a step through the i and j, count consecutive lines of pieces and return a score
-	 * this need not take winning into account since the hasWon function will break the min/max before scoring is called
-	 */
+	
 	private function scorePath(&$board, $iStart, $jStart, $iStep, $jStep){
 		$score = 0;
-		//go through each row, count # of possible wins
+		//pour chaque ligne, on compte les possibilite de reussir
 		$lspaces = 0;
 		$rspaces = 0;
 		$curPlayer = -1;
@@ -250,7 +241,7 @@ class C4AI{
 			//printf("i%d,j%d,is%d,js%d\n", $i,$j, $iStep,$jStep);
 			if($board[$i][$j] == 0){
 				if($curPlayer != -1){
-					//end of path
+					//la fin
 					$end = true;
 				}
 				else{
@@ -260,23 +251,22 @@ class C4AI{
 			else{
 				if($curPlayer != -1){
 					if($curPlayer != $board[$i][$j]){
-						//end of path
+						//fin
 						$end = true;
 					}
 					else{
-						//continuation of path
+						//continuer
 						$curPlayerCount++;
 					}
 				}
 				else{
-					//first path
+					//1 er
 					$curPlayer = $board[$i][$j];
 					$curPlayerCount++;
 				}
 			}
 
 			if($end){
-				//count r spaces
 				$ip = $i;
 				$jp = $j;//i prime, j prime
 				while($ip < 6 && $jp < 7 && $ip >= 0 && $jp >= 0){
@@ -296,10 +286,10 @@ class C4AI{
 				}
 				$curPlayerCount = 0;
 				$curPlayer = -1;
-				$lspaces = 0;//reset path
+				$lspaces = 0;//reset 
 				$rspaces = 0;
 				$end = false;
-				$j -= $jStep;//want to continue on the piece we skipped
+				$j -= $jStep;
 				$i -= $iStep;
 			}
 			$i += $iStep;
@@ -309,12 +299,11 @@ class C4AI{
 		return $score;
 
 	}
-	//Return a score from a x's perspective
+
 	public function score(&$board){
-		//count number of possible ways to win, place very high value on 2 possibilities to win in 1 move, place highest value on winning
 		$score = 0;
 		$curPlayer = -1;
-		//go down each column, count number of longest path at top
+		//pour chaque colonne calcule le max chemin
 		for($j = 0; $j < 7; $j++){
 			if($this->ref[$j] >= -1 && $this->ref[$j] < 5){
 				$pathLength = 0;
@@ -328,25 +317,25 @@ class C4AI{
 					}
 				}
 				if(4 - $pathLength < $this->ref[$j] + 1){
-					//if # needed is less than # left, no help to us
+
 				}
 				else{
 					if($pathLength >= 4){
-						//this player won
+						//reusii
 						$score += 1000 * $this->playerWeight($curPlayer);
 					}
 					else{
-						//player hasn't won, but it's possible
-						$score += $pathLength * $this->playerWeight($curPlayer);//longer path is better, scale this by a weight (possibly by using ml)
+						//n'a pas reussi
+						$score += $pathLength * $this->playerWeight($curPlayer);
 					}
 				}
 			}
 		}
-		//go through rows
+		//lignes
 		for($i = 0; $i < 6; $i++){
 			$score += $this->scorePath($board, $i, 0, 0, 1);
 		}
-		//go through the diagonals
+		//diagonals
 		for($i = 3; $i < 6; $i++){
 			$score += $this->scorePath($board, $i, 0, -1, 1);
 		}
@@ -361,7 +350,7 @@ class C4AI{
 			$score += $this->scorePath($board, 0, $j, 1, 1);
 		}
 
-		return $score;//should be fine, it'll just always select the first move for now
+		return $score;
     }
 
 	public function findAllMoves(&$board, $mainPlayer){
@@ -380,7 +369,6 @@ class C4AI{
 			throw new InvalidArgumentException("Board must be 6x7");	
 		}
 		$this->ref = array(-1,-1,-1,-1,-1,-1,-1);
-		//set up ref (gives index of current top space)
 		for($j = 0; $j < 7; $j++){
 			for($i = 5; $i >= 0; $i--){
 				if($board[$i][$j] == 0){
@@ -389,7 +377,6 @@ class C4AI{
 				}
 			}
 		}
-		//given a 2d array, calculate the best possible move
         $this->max($board, 0, 0, 0);
         return $this->allMoves;
     }
