@@ -8,7 +8,7 @@ private $_board ;
 	function __construct(){
 	}
 
-//function print_line
+	//function print_line
 	private function affiche_line($line) {
 	$board = $_SESSION["board"];
 	echo "<tr>\n";
@@ -34,7 +34,7 @@ private $_board ;
 	echo "\n</tr>\n";
     }
 
-    //function print_board() {
+    //affichage de tout le plateau {
     function affiche_plateau() {
 	echo '<form class="intable" action="../controleur/p4.php" method="post">'."\n";
 	echo '<table>'."\n";
@@ -43,12 +43,14 @@ private $_board ;
 	echo "</table>\n</form>\n";
     }
 
+    //affichage lors de la fin de la partie
     function print_board_final() {
 	echo '<table>'."\n";
 	for ($i=(HAUT - 1); $i>=0; $i--) $this->affiche_line($i);
 	echo "</table>\n";
     }
 
+    //affichage dans le cas de jeu contre la machine
     function print_board_AI() {
 	echo '<form class="intable" action="../controleur/p4AI.php" method="post">'."\n";
 	echo '<table>'."\n";
