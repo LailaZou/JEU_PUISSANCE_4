@@ -1,8 +1,6 @@
 <?php
 require_once("hautlarg.php");
-
-
-
+//Initialise le plateau de jeu
 class init{
 
 	function __construct(){
