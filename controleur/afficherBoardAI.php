@@ -5,6 +5,7 @@
 	require_once("validateClass.php");
 
 	function reverse($board){
+		//fonction qui reverse la table pour l adapter à C4AI
 		//$board[$i][$line];
 			$boardRes = array(
 			array(0, 0, 0, 0, 0, 0, 0),
@@ -27,16 +28,17 @@
 	}
 
 
-	$affich = new affichage();
+	$affich = new affichage();//classe affichage
 
-	if($_SESSION["finish"]==false){
+	if($_SESSION["finish"]==false){//si la partie est en cour de jeu
 		//Jouer par computer
 		if($_SESSION["turn"] == 2){
 			$board = $_SESSION["board"];
 			$boardR = reverse($board);
-			if($_SESSION["mode"]=="easy"){
-				$bestPos = rand(0 , 6);
-				$valide = new validate();
+			if($_SESSION["mode"]=="easy"){ //si c'est le mode facile 
+				$bestPos = rand(0 , 6);//choix aleatoire de la colonne
+				$valide = new validate(); 
+				//on s'assure que le choix est valide sinon on recherche
 				$continue = true;
 				while($continue){
 					if($valide->est_valide($bestPos)){
@@ -44,21 +46,21 @@
 					}
 				}
 			} 
-			else{
+			else{//si le choix est difficile
 				$ai = C4AI::getInstance();
-				$bestPos = $ai->getBestPos($boardR ,2);
+				$bestPos = $ai->getBestPos($boardR ,2); //on recupere la meilleur posistion de la classe C4AI
 			}
 
-			require_once("jouerComputer.php");
-			$affich->print_board_AI();
+			require_once("jouerComputer.php"); //le computer joue 
+			$affich->print_board_AI(); //on affiche le plateau
 		}
 		 else{
-		    $affich->print_board_AI();
+		    $affich->print_board_AI();//on affiche le plateau
 		}
 	//Afficher encor
 	}
 	else{
-		$affich->print_board_final();
+		$affich->print_board_final(); //on affiche le plateau de fin de partie
 		$gagne = (($_SESSION["turn"] == 1)? "Vous avez gagné!!" : "Game over");
 		unset($_SESSION["board"]); 
 	}
