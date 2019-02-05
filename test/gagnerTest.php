@@ -32,6 +32,7 @@ class gagnerTests extends TestCase
     {
         //Avec ces exemples on presque tester tous les cas ou la machine doit prendre une decision bien specifique
         return [
+         //vertical
         [array(
             array(0, 0, 0, 0, 0, 0),
             array(1, 2, 0, 0, 0, 0),
@@ -42,6 +43,7 @@ class gagnerTests extends TestCase
             array(0, 0, 0, 0, 0, 0)
             ),4,true],
         [array(
+         //vertical
             array(0, 0, 0, 0, 0, 0),
             array(2, 2, 0, 0, 0, 0),
             array(2, 1, 0, 0, 0, 0),
@@ -51,6 +53,7 @@ class gagnerTests extends TestCase
             array(0, 0, 0, 0, 0, 0)
             ),4,false],
         [array(
+         //horizontal
             array(0, 0, 0, 0, 0, 0),
             array(1, 2, 0, 0, 0, 0),
             array(2, 1, 0, 0, 0, 0),
@@ -60,6 +63,7 @@ class gagnerTests extends TestCase
             array(0, 0, 0, 0, 0, 0)
             ),3,true],
         [array(
+         //horizontal
             array(0, 0, 0, 0, 0, 0),
             array(1, 2, 0, 0, 0, 0),
             array(2, 1, 0, 0, 0, 0),
@@ -69,6 +73,7 @@ class gagnerTests extends TestCase
             array(0, 0, 0, 0, 0, 0)
             ),3,false],
         [array(
+         //diagonal
             array(0, 0, 0, 0, 0, 0),
             array(1, 2, 0, 0, 0, 0),
             array(2, 1, 0, 0, 0, 0),
@@ -78,6 +83,7 @@ class gagnerTests extends TestCase
             array(0, 0, 0, 0, 0, 0)
             ),4,true],
         [array(
+         //horizontal
             array(0, 0, 0, 0, 0, 0),
             array(1, 2, 0, 0, 0, 0),
             array(2, 1, 0, 0, 0, 0),
