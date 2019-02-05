@@ -17,8 +17,9 @@
 		/**
 		 * method pren comme parametre
 		 * un tableau des post 
+		 *pour valider l'authentification
 		*/
-		//methode verifier l'authentification 
+		
 		public  function auth($tab)
 		{
 			$rep=false;
@@ -33,9 +34,7 @@
 						break;
 					}	
 			    }
-			    /*
-			    *Attention il faut changer le serveur
-			    */
+			   
 			if ($rep) {
 				return true;
 			} else {
@@ -85,7 +84,7 @@
 		      }
 		   
 		}
-
+		//fonction pour recuperer la listes des scores selon les joueurs gagnant
 		public function RecupererListe()
 		{
 
